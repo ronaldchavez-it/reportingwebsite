@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Portal de Resúmenes</title>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(120deg, #021523 0%, #062c4d 40%, #0b4c89 80%);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2 {
+      
+ font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #58a6ff; /* ← hace que el título se vea sobre fondo oscuro */
+  text-align: center;
+
+    }
+
+h2::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background-color: #58a6ff; /* subrayado visible */
+  margin: 10px auto 0 auto;
+  border-radius: 2px;
+}
+
+    textarea {
+      width: 90%;
+      max-width: 900px;
+      padding: 15px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .reporte {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 900px;
+      width: 100%;
+      font-size: 15px;
+      color: #111827;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+ 
+ <h2>Portal de Resúmenes (Azure Foundry)</h2> 
+
+<!-- 🔥 ESTE ERA EL ELEMENTO QUE TE FALTABA -->
+<textarea id="prompt" placeholder="Escribe tu consulta aquí..."></textarea>
+
+<div>
+  <button onclick="generarResumen()">Generar resumen</button>
+  <button onclick="limpiar()">Limpiar</button>
+</div>
+
+<div id="resultado" class="reporte">
+REPORTE EJECUTIVO
+Esperando acción...
+</div>
+
+<script>
+function generarResumen() {
+  const resultado = document.getElementById("resultado");
+  const prompt = document.getElementById("prompt").value || "Resumen general";
+
+  resultado.textContent = "Generando resumen...\n(esto puede tardar unos segundos)";
+
+  const url = "https://prod-07.westus2.logic.azure.com:443/workflows/57f8b8c837b144bfa39dda67d901ed0b/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=YTk3gHpKFM8Uqj4mp61IGghDE8lYWKtNc81vBbdMENU";
+
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: prompt })
+  })
+  .then(res => res.json())
+  .then(data => {
+    resultado.textContent = data.resumen || "(respuesta vacía)";
+  })
+  .catch(err => {
+    resultado.textContent = "ERROR:\n" + err;
+  });
+}
+
+function limpiar() {
+  document.getElementById("prompt").value = "";
+  document.getElementById("resultado").textContent =
+    "REPORTE EJECUTIVO\nEsperando acción...";
+}
+</script>
+
+</body>
+</html>
