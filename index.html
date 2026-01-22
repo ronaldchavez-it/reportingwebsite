@@ -112,17 +112,23 @@ function generarResumen() {
   })
   .then(res => res.json())
   .then(data => {
-    // 🔥 AQUI EL CAMBIO
-    resultado.textContent = JSON.stringify(data, null, 2);
+    resultado.textContent = data.resumen || "(respuesta vacía)";
   })
   .catch(err => {
     resultado.textContent = "ERROR:\n" + err;
   });
 }
 
+function limpiar() {
+  document.getElementById("prompt").value = "";
+  document.getElementById("resultado").textContent =
+    "REPORTE EJECUTIVO\nEsperando acción...";
+}
+
 </script>
 
 </body>
 </html>
+
 
 
