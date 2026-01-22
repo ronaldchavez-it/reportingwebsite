@@ -103,7 +103,7 @@ function generarResumen() {
 
   resultado.textContent = "Generando resumen...\n(esto puede tardar unos segundos)";
 
-  const url = "https://prod-07.westus2.logic.azure.com:443/workflows/57f8b8c837b144bfa39dda67d901ed0b/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=YTk3gHpKFM8Uqj4mp61IGghDE8lYWKtNc81vBbdMENU";
+  const url = "https://prod-19.westus2.logic.azure.com/workflows/57f8b8c837b144bfa39dda67d901ed0b/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=YTk3gHpKFM8Uqj4mp61IGghDE8lYWKtNc81vBbdMENU";
 
   fetch(url, {
     method: "POST",
@@ -124,4 +124,5 @@ function generarResumen() {
 
 </body>
 </html>
+
 
