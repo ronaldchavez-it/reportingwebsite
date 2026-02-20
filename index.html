@@ -1,134 +1,219 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Portal de Resúmenes</title>
+  <meta charset="UTF-8" />
+  <title>Monitor de Actividades de Ventas  con IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(120deg, #021523 0%, #062c4d 40%, #0b4c89 80%);
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+    :root{
+      --brand:#0067c0; --brand-hover:#004d99;
+      --text:#1a1a1a; --muted:#4d4d4d;
+      --card:#f7f7f7; --border:#dddddd; --radius:10px;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family: Segoe UI, Inter, system-ui, -apple-system, Roboto, Arial, sans-serif; background:#fff; color:var(--text); }
+
+    .hero{ display:flex; min-height:100vh; flex-wrap:wrap; }
+
+    /* IMAGEN IZQUIERDA */
+    .hero img{
+      width:50%;
+      min-width:300px;
+      height:auto;
+      max-height:100vh;
+      object-fit:cover;
+      display:block;
+      background:#f0f2f5;
     }
 
-    h2 {
-      
- font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #58a6ff; /* ← hace que el título se vea sobre fondo oscuro */
-  text-align: center;
+    /* CONTENIDO DERECHO */
+    .content{
+      flex:1; padding:60px 50px; display:flex; flex-direction:column; justify-content:center;
+      max-width:760px; margin:0 auto;
+    }
+    h1{ font-size:clamp(26px,4vw,36px); margin:0 0 10px 0; font-weight:700; letter-spacing:.2px; }
+    p.instructions{ font-size:15px; color:var(--muted); margin:6px 0 22px 0; max-width:560px; line-height:1.55; }
+    label{ display:block; font-size:14px; margin-bottom:6px; color:#444; }
+    textarea{
+      width:100%; padding:14px; font-size:15px; border-radius:var(--radius); border:1px solid #ccc;
+      resize:vertical; min-height:110px; margin-bottom:14px; background:#fff; color:#111827;
+    }
+    textarea::placeholder{ color:#8a8a8a; }
+    .buttons{ display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    button{
+      background:var(--brand); color:#fff; border:none; padding:12px 20px; font-size:15px; border-radius:8px; cursor:pointer; transition:background .2s;
+    }
+    button:hover{ background:var(--brand-hover); }
+    .secondary{ background:#e5e5e5; color:#333; }
+    .secondary:hover{ background:#d8d8d8; }
+    .result-box{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; white-space:pre-wrap; min-height:120px; }
+    .result-title{ font-weight:600; margin-bottom:6px; color:#0f172a; font-size:15px; }
 
+    @media (max-width:900px){
+      .hero img{ width:100%; max-height:38vh; }
+      .content{ padding:28px 18px 40px 18px; }
     }
 
-h2::after {
-  content: "";
-  display: block;
-  width: 80px;
-  height: 3px;
-  background-color: #58a6ff; /* subrayado visible */
-  margin: 10px auto 0 auto;
-  border-radius: 2px;
-}
-
-    textarea {
-      width: 90%;
-      max-width: 900px;
-      padding: 15px;
-      font-size: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
-    }
-
-    button {
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      margin: 5px;
-    }
-
-    button:hover {
-      background-color: #2563eb;
-      transform: translateY(-2px);
-    }
-
-    .reporte {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 900px;
-      width: 100%;
-      font-size: 15px;
-      color: #111827;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-x: auto;
-    }
+    /* Opcional: PDF limpio al imprimir */
+    @media print { .buttons, textarea { display:none !important; } }
   </style>
 </head>
 
 <body>
- 
- <h2>Portal de Resúmenes (Azure Foundry)</h2> 
+  <div class="hero">
+    <!-- Columna izquierda: IMAGEN -->
+    <img src="./imagen.jpg" alt="Imagen del portal de telemarketing" />
 
-<!-- 🔥 ESTE ERA EL ELEMENTO QUE TE FALTABA -->
-<textarea id="prompt" placeholder="Escribe tu consulta aquí..."></textarea>
+    <!-- Columna derecha: CONTENIDO -->
+    <div class="content">
 
-<div>
-  <button onclick="generarResumen()">Generar resumen</button>
-  <button onclick="limpiar()">Limpiar</button>
-</div>
+      <h1>Monitor de Actividades de Ventas con IA</h1>
 
-<div id="resultado" class="reporte">
-REPORTE EJECUTIVO
-Esperando acción...
-</div>
+      <p class="instructions">
+        Ingrese la consulta o solicitud relacionada con las actividades de ventas.
+        El sistema analizará los datos mediante el modelo de IA corporativo para generar un resultado claro y útil.
+      </p>
 
-<script>
+      <label for="prompt">Detalle de la consulta</label>
+      <textarea id="prompt" placeholder="Describa la consulta o caso que desea analizar…"></textarea>
 
-function generarResumen() {
-  const resultado = document.getElementById("resultado");
-  const prompt = document.getElementById("prompt").value || "Resumen general";
+      <div class="buttons">
+        <button type="button" onclick="generarResumen()">Analizar consulta</button>
+        <button type="button" class="secondary" onclick="limpiar()">Limpiar</button>
+        <button type="button" class="secondary" onclick="window.print()">Imprimir</button>
+        <!-- ÚNICO: Guardar como… (PDF / Word / MD / TXT) -->
+        <button type="button" class="secondary" onclick="guardarComo()">Guardar como…</button>
+      </div>
 
-  resultado.textContent = "Generando resumen...\n(esto puede tardar unos segundos)";
+      <div class="result-box" aria-live="polite" id="caja-resultado">
+        <div class="result-title">Resultado del análisis</div>
+        <div id="resultado">Esperando información...</div>
+      </div>
+    </div>
+  </div>
 
-  const url = "https://prod-19.westus2.logic.azure.com:443/workflows/a3d6efd8621d4548ba4ef2b99b0e6aa8/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=DF2vo2YLtS7jFr53IfFbOdJu3VlGI-ay-dh1n9JnUCE";
+  <!-- Librerías: html2pdf para PDF y docx para .docx -->
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
 
-  fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: prompt })
-  })
-  .then(res => res.json())
-  .then(data => {
-    resultado.textContent = data.resumen || "(respuesta vacía)";
-  })
-  .catch(err => {
-    resultado.textContent = "ERROR:\n" + err;
-  });
-}
+  <script>
+    // URL de tu Logic App
+    const LOGIC_APP_URL =
+      "https://prod-19.westus2.logic.azure.com:443/workflows/a3d6efd8621d4548ba4ef2b99b0e6aa8/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=DF2vo2YLtS7jFr53IfFbOdJu3VlGI-ay-dh1n9JnUCE"
+    async function generarResumen() {
+      const resultadoEl = document.getElementById("resultado");
+      const prompt = document.getElementById("prompt").value.trim();
 
-function limpiar() {
-  document.getElementById("prompt").value = "";
-  document.getElementById("resultado").textContent =
-    "REPORTE EJECUTIVO\nEsperando acción...";
-}
+      if (!prompt) {
+        resultadoEl.textContent = "Por favor, ingrese el detalle de la consulta antes de analizar.";
+        return;
+      }
 
-</script>
+      resultadoEl.textContent = "Procesando consulta...\n(esto puede tardar unos segundos)";
+      try {
+        const res = await fetch(LOGIC_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
 
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text}`);
+        }
+
+        const data = await res.json().catch(() => ({}));
+        const salida = data.resumen || data.resultado || data.output || JSON.stringify(data, null, 2) || "(respuesta vacía)";
+        resultadoEl.textContent = salida;
+      } catch (err) {
+        resultadoEl.textContent = "ERROR al procesar la consulta:\n" + (err?.message || err);
+      }
+    }
+
+    function limpiar() {
+      document.getElementById("prompt").value = "";
+      document.getElementById("resultado").textContent = "Esperando información...";
+    }
+
+    // ---- Guardar como… (File System Access API) ----
+    async function guardarComo() {
+      const resultadoTxt = document.getElementById("resultado").textContent || "";
+      const elementoPDF = document.getElementById("caja-resultado"); // lo que exportamos a PDF
+      const nombreBase = `resultado_telemarketing_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}`;
+
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: `${nombreBase}.pdf`,
+            types: [
+              { description: "Documento PDF",       accept: { "application/pdf": [".pdf"] } },
+              { description: "Documento de Word",   accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] } },
+              { description: "Markdown",            accept: { "text/markdown": [".md"] } },
+              { description: "Texto",               accept: { "text/plain":    [".txt"] } }
+            ]
+          });
+
+          const nombreElegido = handle.name || `${nombreBase}.pdf`;
+          const ext = (nombreElegido.split(".").pop() || "").toLowerCase();
+          const writable = await handle.createWritable();
+
+          if (ext === "pdf") {
+            // Generar PDF del bloque de resultado
+            const opt = {
+              margin: 10,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            const pdfBlob = await new Promise((resolve) => {
+              html2pdf().from(elementoPDF).set(opt).toPdf().get('pdf').then(pdf => resolve(pdf.output('blob')));
+            });
+            await writable.write(pdfBlob);
+
+          } else if (ext === "docx") {
+            // Generar .docx a partir del texto del resultado
+            const { Document, Packer, Paragraph } = docx;
+            const paragraphs = (resultadoTxt || "(sin contenido)")
+              .split(/\n+/)
+              .map(linea => new Paragraph({ text: linea }));
+
+            const doc = new Document({
+              sections: [{ properties: {}, children: paragraphs }]
+            });
+
+            const buffer = await Packer.toBlob(doc);
+            await writable.write(buffer);
+
+          } else if (ext === "md") {
+            await writable.write(new Blob([resultadoTxt], { type: "text/markdown;charset=utf-8" }));
+
+          } else { // txt
+            await writable.write(new Blob([resultadoTxt], { type: "text/plain;charset=utf-8" }));
+          }
+
+          await writable.close();
+          return;
+
+        } catch (e) {
+          console.warn("Guardar como… cancelado o no disponible:", e);
+        }
+      }
+
+      // Fallback universal (descarga .txt)
+      const blob = new Blob([resultadoTxt], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${nombreBase}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
+
 </html>
+
 
 
 
